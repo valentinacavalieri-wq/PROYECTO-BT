@@ -83,7 +83,7 @@ if archivo_subido is not None:
         st.success(f"Archivo cargado con éxito. Filas a procesar: {len(df_bruto)}")
         
         if st.button("Iniciar Limpieza", type="primary"):
-            with st.spinner("Aplicando reglas de negocio (Renombrando, validando, filtrando)..."):
+            with st.spinner("Renombrando, validando, filtrando..."):
                 
                 # 1. Identificar y renombrar columnas
                 col_map = {}
