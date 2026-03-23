@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limpiador de Bases de Datos</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .file-input-wrapper {
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            width: 90%;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h1>Limpiador de Datos</h1>
+        <p>Sube tu archivo CSV o Excel para estandarizar las ciudades.</p>
+
+        <form id="uploadForm">
+            <div class="file-input-wrapper">
+                <input type="file" id="fileInput" accept=".csv, .xlsx" required>
+            </div>
+            <button type="submit" id="submitBtn">Limpiar Archivo</button>
+        </form>
+    </div>
+
+    <script>
+        // Esta es la magia que conecta el botón con tu código de Python
+        document.getElementById('uploadForm').addEventListener('submit', async function (e) {
+            e.preventDefault(); // Evita que la página recargue
+
+            const file = document.getElementById('fileInput').files[0];
+            const btn = document.getElementById('submitBtn');
+
+            if (!file) return;
+
+            // Cambiamos el texto del botón mientras carga
+            btn.innerText = "Procesando...";
+            btn.style.backgroundColor = "#6c757d";
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                // Enviamos el archivo a la ruta invisible que creaste antes
+                const response = await fetch('/limpiar-datos/', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    // Si todo sale bien, descargamos el archivo automáticamente
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = "Limpio_" + file.name;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+
+                    btn.innerText = "¡Éxito! Limpiar otro";
+                    btn.style.backgroundColor = "#28a745"; // Se pone verde
+                } else {
+                    alert("Hubo un error al procesar el archivo.");
+                    btn.innerText = "Limpiar Archivo";
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                btn.innerText = "Limpiar Archivo";
+            }
+        });
+    </script>
+
+</body>
+
+</html>

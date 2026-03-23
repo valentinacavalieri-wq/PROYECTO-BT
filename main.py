@@ -1,10 +1,15 @@
 from fastapi import FastAPI, UploadFile, File
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
 import pandas as pd
 import io
 
 # 1. Inicializamos la aplicación de FastAPI
 app = FastAPI(title="Limpiador de Datos API")
+
+# Esta ruta muestra tu página web bonita
+@app.get("/")
+async def mostrar_pagina():
+    return FileResponse("index.html")
 
 # 2. Tu función original se queda EXACTAMENTE IGUAL
 def estandarizar_ciudad(ciudad):
